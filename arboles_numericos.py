@@ -11,7 +11,7 @@ __author__ = "Julio Waissman"
 __date__ = "enero 2025"
 
 
-import math
+import math, random
 from collections import Counter
 
 def entrena_arbol(datos, target, clase_default, 
@@ -58,11 +58,10 @@ def entrena_arbol(datos, target, clase_default,
     if (max_profundidad == 0 or 
         len(datos) <= min_ejemplos or 
         clases.most_common(1)[0][1] / len(datos) >= acc_nodo):
-        
-        return NodoN(terminal=True, clase_default=clase_default)
+            return NodoN(terminal=True, clase_default=clase_default)
     
     variable, valor = selecciona_variable_valor(
-        datos, target, atributos
+        datos, target, atributos if not isinstance(variables_seleccionadas, int) else random.sample(atributos, variables_seleccionadas)
     )
     nodo = NodoN(
         terminal=False, 
