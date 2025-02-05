@@ -9,7 +9,7 @@ __author__ = "Jesus Flores Lacarra"
 __date__ = "febrero 2025"
 
 import arboles_numericos as an
-
+from collections import Counter
 
 def entrena_bosque(datos, target, clase_default, max_profundidad, num_arboles, num_atributos):
     """
@@ -34,9 +34,47 @@ def entrena_bosque(datos, target, clase_default, max_profundidad, num_arboles, n
         
     """
     bosque = []
-    # TODO: Implementar
     for _ in range(num_arboles):
         bosque.append(an.entrena_arbol(datos, target, clase_default, max_profundidad, num_atributos))
     
-    
     return bosque
+
+def predice_bosque(bosque, datos):
+    """
+    Funcion que predice la clase de una instancia a partir de un bosque aleatorio.
+    
+    Parametros:
+        bosque: list(dict)
+            Lista de diccionarios, donde cada diccionario representa un arbol de decision.
+        datos: dict
+            Diccionario con los valores de los atributos de una instancia.
+        
+    Regresa:
+        clase: str
+            La clase predicha para la instancia.
+        
+    """
+    predicciones = []
+    for arbol in bosque:
+        predicciones.append(an.predice_arbol(arbol, datos))
+        
+    return [Counter(prediccion).most_common(1)[0][0] for prediccion in zip(*predicciones)]
+
+def evalua_bosque(bosque, datos, target):
+    """
+    Funcion que evalua la precision de un bosque aleatorio.
+
+    Parametros:
+        bosque: list(Nodo)
+            Lista de arboles de decision.
+        datos: list(dict)
+            Lista de diccionarios, donde cada diccionario representa una instancia con los valores de sus atributos.
+        target: str
+            El nombre del atributo que se quiere predecir
+
+    Regresa:
+        accuracy: float
+            La precision del bosque
+    """
+    predicciones = predice_bosque(bosque, datos)
+    return sum(1 for p, d in zip(predicciones, datos) if p == d[target]) / len(datos)
