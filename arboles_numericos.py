@@ -61,7 +61,7 @@ def entrena_arbol(datos, target, clase_default,
             return NodoN(terminal=True, clase_default=clase_default)
     
     variable, valor = selecciona_variable_valor(
-        datos, target, atributos if not isinstance(variables_seleccionadas, int) else random.sample(atributos, variables_seleccionadas)
+        datos, target, random.sample(atributos, variables_seleccionadas) if type(variables_seleccionadas) == int else atributos
     )
     nodo = NodoN(
         terminal=False, 

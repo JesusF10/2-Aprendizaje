@@ -10,8 +10,9 @@ __date__ = "febrero 2025"
 
 import arboles_numericos as an
 from collections import Counter
+import random
 
-def entrena_bosque(datos, target, clase_default, max_profundidad, num_arboles, num_atributos):
+def entrena_bosque(datos, target, clase_default, max_profundidad=1, num_arboles=3, num_atributos=None):
     """
     Funcion que entrena un bosque aleatorio a partir de un conjunto de datos.
     
@@ -34,8 +35,11 @@ def entrena_bosque(datos, target, clase_default, max_profundidad, num_arboles, n
         
     """
     bosque = []
-    for _ in range(num_arboles):
-        bosque.append(an.entrena_arbol(datos, target, clase_default, max_profundidad, num_atributos))
+    random.shuffle(datos)
+    tamano_conjunto = len(datos) // num_arboles
+    for i in range(num_arboles):
+        datos_entrenamiento = datos[i*tamano_conjunto : (i+1)*tamano_conjunto]
+        bosque.append(an.entrena_arbol(datos_entrenamiento, target, clase_default, max_profundidad, num_atributos))
     
     return bosque
 
