@@ -5,10 +5,10 @@ import random
 
 # Descarga y descomprime los datos
 
-url = "https://archive.ics.uci.edu/static/public/17/breast+cancer+wisconsin+diagnostic.zip"
-archivo = "datos/cancer.zip"
-archivo_datos = "datos/wdbc.data"
-atributos = ['ID', 'Diagnosis'] + [f'feature_{i}' for i in range(1, 31)]
+url = "https://archive.ics.uci.edu/static/public/59/letter+recognition.zip"
+archivo = "datos/letters.zip"
+archivo_datos = "datos/letter-recognition.data"
+atributos = ['Letter'] + [f'feature_{i}' for i in range(1, 17)]
 
 # Descarga datos
 if not os.path.exists("datos"):
@@ -23,18 +23,21 @@ datos = ut.lee_csv(
     atributos=atributos,
     separador=","
 )
+
+alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
 for d in datos:
-    d['Diagnosis'] = 1 if d['Diagnosis'] == 'M' else 0
-    for i in range(1, 31):
+    d['Letter'] = alphabet.index(d['Letter'])
+    for i in range(1, 17):
         d[f'feature_{i}'] = float(d[f'feature_{i}'])
-    del(d['ID'])
 
 # Selecciona los artributos
-target = 'Diagnosis'
-atributos = [target] + [f'feature_{i}' for i in range(1, 31)]
+target = 'Letter'
+atributos = [target] + [f'feature_{i}' for i in range(1, 17)]
 
 # Selecciona un conjunto de entrenamiento y de validación
 random.seed(42)
+datos = datos[:500]
 random.shuffle(datos)
 N = int(0.8*len(datos))
 datos_entrenamiento = datos[:N]
@@ -44,7 +47,7 @@ datos_validacion = datos[N:]
 # i: numero de arboles
 # j: profundidad
 # k: numero de variables
-params = [(i, j, k) for i in [1, 3, 5, 10, 20, 30] for j in [1, 3, 5, 10, 20, 30] for k in [None, 2, 5, 10, 20]]
+params = [(i, j, k) for i in [1, 3, 5, 10, 20, 30] for j in [1, 3, 5, 10, 20, 30] for k in [None, 5, 10, 15]]
 
 errores = []
 
@@ -65,14 +68,17 @@ for num_arboles, profundidad, num_variables in params:
 print('n_arboles'.center(15) + 'profundidad'.center(15) + 'n_variables'.center(15) + 'Ein'.center(15) + 'E_out'.center(15))
 print('-' * 75)
 
-print(len(errores[0]))
 for num_arboles, profundidad, num_variables, error_entrenamiento, error_validacion in errores:
     print(
-        f'{num_arboles}'.center(10),
-        f'{profundidad}'.center(10),
-        f'{num_variables}'.center(10) 
+        f'{num_arboles}'.center(15),
+        f'{profundidad}'.center(15),
+        f'{num_variables}'.center(15) 
         + f'{error_entrenamiento:.2f}'.center(15) 
         + f'{error_validacion:.2f}'.center(15)
     )
 print('-' * 75 + '\n')
-    
+
+#print("El minimo error fue con los parametros: \t", min_error)
+
+print(min(errores, key=lambda x: x[-1]))
+
