@@ -35,11 +35,12 @@ def entrena_bosque(datos, target, clase_default, max_profundidad=1, num_arboles=
         
     """
     bosque = []
+    random.seed(42)
     random.shuffle(datos)
     tamano_conjunto = len(datos) // num_arboles
     for i in range(num_arboles):
         datos_entrenamiento = datos[i*tamano_conjunto : (i+1)*tamano_conjunto]
-        bosque.append(an.entrena_arbol(datos_entrenamiento, target, clase_default, max_profundidad, num_atributos))
+        bosque.append(an.entrena_arbol(datos_entrenamiento, target, clase_default, max_profundidad=max_profundidad, variables_seleccionadas=num_atributos))
     
     return bosque
 
