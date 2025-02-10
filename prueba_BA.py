@@ -35,9 +35,16 @@ for d in datos:
 target = 'Letter'
 atributos = [target] + [f'feature_{i}' for i in range(1, 17)]
 
+
+# Ver informacion de entrenamiento
+verbose = True
+
+# Numero de datos a utilizar
+num_datos = 500   # Aprox. 1 min. Aprox. 5 min con 1000
+
 # Selecciona un conjunto de entrenamiento y de validación
 random.seed(42)
-datos = datos[:500]
+datos = datos[:min(num_datos, len(datos))]
 random.shuffle(datos)
 N = int(0.8*len(datos))
 datos_entrenamiento = datos[:N]
@@ -51,7 +58,14 @@ params = [(i, j, k) for i in [1, 3, 5, 10, 20, 30] for j in [1, 3, 5, 10, 20, 30
 
 errores = []
 
+if verbose:
+    print('-' * 100)
+    print(f"Dataset: {archivo_datos} \t Num. Datos = {num_datos} \t Objetivo: {target}")
+    print('-' * 100)
+
 for num_arboles, profundidad, num_variables in params:
+    if verbose:
+        print(f"Entrenando bosque. Parametros: \t Num. Arboles = {num_arboles} Profundidad = {profundidad} Num. Variables = {num_variables}")
     bosque = ba.entrena_bosque(
         datos_entrenamiento,
         target,
@@ -65,8 +79,9 @@ for num_arboles, profundidad, num_variables in params:
     errores.append( (num_arboles, profundidad, num_variables, error_en_muestra, error_en_validacion) )
     
 # Muestra los errores
+print('-' * 100 + '\n')
 print('n_arboles'.center(15) + 'profundidad'.center(15) + 'n_variables'.center(15) + 'Ein'.center(15) + 'E_out'.center(15))
-print('-' * 75)
+print('-' * 100)
 
 for num_arboles, profundidad, num_variables, error_entrenamiento, error_validacion in errores:
     print(
@@ -76,9 +91,11 @@ for num_arboles, profundidad, num_variables, error_entrenamiento, error_validaci
         + f'{error_entrenamiento:.2f}'.center(15) 
         + f'{error_validacion:.2f}'.center(15)
     )
-print('-' * 75 + '\n')
+print('-' * 100 + '\n')
 
-#print("El minimo error fue con los parametros: \t", min_error)
-
-print(min(errores, key=lambda x: x[-1]))
-
+if verbose:
+    min_error = min(errores, key=lambda x: x[-1])
+    print(f"El minimo error fue: \nE_in = {min_error[3]} \nE_out = {min_error[4]}")
+    print("Parametros:")
+    print(f"Num. Arboles = {min_error[0]} Profundidad = {min_error[1]} Num. Variables = {min_error[2]}")
+    print('-' * 100 + '\n')
